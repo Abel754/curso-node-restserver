@@ -1,38 +1,63 @@
 const {response, request} = require('express');
+const bcryptjs = require('bcryptjs'); // npm i bcryptjs per hashear passwords
+const Usuario = require('../models/usuario');
 
-const usuariosGet = (req = request, res = response) => {
+const usuariosGet = async(req = request, res = response) => {
 
-    const {q, nombre = 'No Name', apikey, page = 1, limit} = req.query; // Agafa els valors de la URL que van després de l'interrogant -> ?valor=hola&valor2=hola2
+    const { limite = 5, desde = 0 } = req.query; // limite i desde seran valors enviats per URL -> ?limite=10&desde=5
+    // const usuarios = await Usuario.find({ estado = true }) // Agafa tots els usuarios de la BD amb estado true
+    //     .skip(Number(desde))
+    //     .limit(Number(limite)); // Serà un valor passat per paràmetre, el límit d'usuaris que volem mostrar
+    
+    // const total = await Usuario.countDocuments({ estado = true }); // Compta el número de registres que hi ha a la BD
+
+    // El que tenim adalt es pot fer tot en un amb una Promise de la seg manera:
+    const [ total, usuarios ] = await Promise.all([ // Total serà el countDocuments i usuarios el .find
+        Usuario.countDocuments({ estado : true }),
+        Usuario.find({ estado : true }) // Agafa tots els usuarios de la BD amb estado true
+            .skip(Number(desde))
+            .limit(Number(limite))
+    ]);
 
     res.json({
-        msg: "get API - controlador",
-        q,
-        nombre,
-        apikey,
-        page,
-        limit
+        total,
+        usuarios
     });
 }
 
-const usuariosPost = (req, res = response) => {
+const usuariosPost = async(req, res = response) => {
 
-    const {nombre, edad} = req.body; // Així agafo la informació que s'envia pel body
+    const {nombre, correo, password, rol} = req.body; // Així agafo la informació que s'envia pel body
+    const usuario = new Usuario({nombre, correo, password, rol});
+
+    // Encriptar la password
+    const salt = bcryptjs.genSaltSync(); // Utilitzem el paquet bcryptjs per encriptar la password. S'han de fer aquests dos passos
+    usuario.password = bcryptjs.hashSync(password, salt);
+
+    // Guardar en BD
+    await usuario.save(); // És de mongoose el .save
 
     res.json({
-        msg: "post API - controlador",
-        nombre,
-        edad
+        usuario
     });
 }
 
-const usuariosPut = (req, res = response) => {
+const usuariosPut = async(req, res = response) => {
 
-    const id = req.params.id; // Agafem la id enviada des del Model
+    const {id} = req.params; // Agafem la id enviada des dels params, la id no s'envia pel body
+    const { _id, password, google, ...resto } = req.body; // ...resto és la resta que vingui pel body
+    // _id és un param que s'envia sol al body agafant la ID de req.params
 
-    res.json({
-        msg: "put API - controlador",
-        id: id
-    });
+    // Validar contra base de datos
+    if( password ) {
+        // Encriptar la password
+        const salt = bcryptjs.genSaltSync(); // Utilitzem el paquet bcryptjs per encriptar la password. S'han de fer aquests dos passos
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate( id, resto ); // Busca a la BD la ID que s'envia per paràmetre si coincideix amb alguna de la BD i actualitza el contingut amb la informació enviada pel body
+
+    res.json(usuario);
 }
 
 const usuariosPatch = (req, res = response) => {
@@ -41,9 +66,18 @@ const usuariosPatch = (req, res = response) => {
     });
 }
 
-const usuariosDelete = (req, res = response) => {
+const usuariosDelete = async(req, res = response) => {
+
+    const { id } = req.params;
+
+    // Físicamente lo borramos (No recomanable)
+    // const usuario = await Usuario.findByIdAndDelete(id);
+
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado : false }); // Se li canvia l'estat a false
+
     res.json({
-        msg: "delete API - controlador"
+        id,
+        usuario
     });
 }
 
