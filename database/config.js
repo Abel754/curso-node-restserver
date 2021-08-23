@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'); // npm i mongoose. Per fer servir el mongoDB
 
-
 const dbConnection = async() => {
+    
 
     try {
 
