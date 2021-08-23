@@ -35,10 +35,9 @@ const validarJWT = async(req = request, res = response, next) => {
 
         req.usuario = usuario; // Emmagatzarem en la nova clau req.usuario la informació de l'usuari que borra a l'altre
 
-        //next();
+        next();
         
     } catch (error) {
-        next(error);
         console.log(error);
         res.status(401).json({
             msg: 'Token no válido'
