@@ -35,7 +35,8 @@ const UsuarioSchema = Schema({
 
 // Quan fem un postman, realment guardarà tots els valors però no mostrarà la password i el __v del Postman
 UsuarioSchema.methods.toJSON = function() {
-    const { __v, password, ...usuario } = this.toObject(); // Agafa __v i password, i la resta s'emmagatzemen en usuario
+    const { __v, password, _id, ...usuario } = this.toObject(); // Agafa __v i password, i la resta s'emmagatzemen en usuario
+    usuario.uid = _id;
     return usuario;
 }
 

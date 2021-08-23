@@ -2,8 +2,13 @@
 const { Router } = require('express');
 const { check } = require('express-validator'); // npm i express-validator
 const { esRolValido, emailExiste, existeUsuarioPorId } = require('../helpers/db-validators');
-const {validarCampos} = require('../middlewares/validar-campos');
 const {usuariosGet, usuariosPost, usuariosPatch, usuariosPut, usuariosDelete} = require('../controllers/usuarios');
+
+// Middlewares Consultar index.js on ja s'importa tot
+// const {validarCampos} = require('../middlewares/validar-campos');
+// const { esAdminRole, tieneRole } = require('../middlewares/validar-roles');
+// const { validarJWT } = require('../middlewares/validar-jwt');
+const {validarCampos, tieneRole, esAdminRole, validarJWT} = require('../middlewares/index');
 
 const router = Router();
 
@@ -25,6 +30,9 @@ router.post('/',[
 ], usuariosPost); // El segon paràmetre (array) sempre és el middleware
 
 router.delete('/:id', [
+    validarJWT,
+    //esAdminRole,
+    tieneRole('ADMIN_ROLE','VENTAS_ROLE'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     validarCampos
