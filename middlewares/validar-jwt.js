@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response, request } = require('express');
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/usuario');
 
@@ -34,7 +34,6 @@ const validarJWT = async(req = request, res = response, next) => {
         }
 
         req.usuario = usuario; // Emmagatzarem en la nova clau req.usuario la informació de l'usuari que borra a l'altre
-
         next();
         
     } catch (error) {
@@ -43,8 +42,6 @@ const validarJWT = async(req = request, res = response, next) => {
             msg: 'Token no válido'
         })
     }
-
-    next();
 
 }
 
