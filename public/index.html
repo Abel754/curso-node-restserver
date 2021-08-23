@@ -25,7 +25,7 @@
         // La variable url serà l'url on ens trobem, si té localhost, utiltizem aquella URL, si no, utilitzem la del Heroku
         var url = ( window.location.hostname.includes('localhost') )
                     ? 'http://localhost:8080/api/auth/google'
-                    : 'https://restserver-node-abel.herokuapp.com'
+                    : 'https://restserver-node-abel.herokuapp.com/api/auth/google'
 
         // Copy paste de la url del Google
         function onSignIn(googleUser) {
