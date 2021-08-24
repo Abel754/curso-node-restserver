@@ -1,5 +1,5 @@
 const Role = require('../models/rol');
-const Usuario = require('../models/usuario');
+const { Usuario, Categoria, Producto } = require('../models');
 
 const esRolValido = async(rol = '') => { // Rol és el camp de la BD, farà una validació personalitzada, agafant el rol, que és enviat pel body i busca un registre que sigui igual a l'enviat per paràmetre. Exemple (USER_ROLE està en la BD? Sí) 
     const existeRol = await Role.findOne({rol});
@@ -19,6 +19,7 @@ const emailExiste = async( correo = '' ) => {
     }
 }
 
+// Comprova si existeix un Usuari passant-li una id
 const existeUsuarioPorId = async( id ) => {
     const existeUsuario = await Usuario.findById(id);
     if( !existeUsuario ) {
@@ -26,10 +27,32 @@ const existeUsuarioPorId = async( id ) => {
     }
 } 
 
+// Comprova si existeix una Categoria passant-li una id
+const existeCategoriaPorId = async( id ) => {
+
+    const existeCategoria = await Categoria.findById(id);
+    if( !existeCategoria ) {
+        throw new Error(`El id ${id} no existe`);
+    }
+
+}
+
+// Comprova si existeix un Producte passant-li una id
+const existeProductoPorId = async( id ) => {
+
+    const existeProducto = await Producto.findById(id);
+    if( !existeProducto ) {
+        throw new Error(`El id ${id} no existe`);
+    }
+
+}
+
 
 
 module.exports = {
     esRolValido: esRolValido,
     emailExiste: emailExiste,
-    existeUsuarioPorId: existeUsuarioPorId
+    existeUsuarioPorId: existeUsuarioPorId,
+    existeCategoriaPorId: existeCategoriaPorId,
+    existeProductoPorId: existeProductoPorId
 }

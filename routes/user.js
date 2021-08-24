@@ -15,6 +15,7 @@ const router = Router();
 router.get('/', usuariosGet);
 
 router.put('/:id', [
+    validarJWT,
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorId),
     validarCampos // Es posarà sempre amb un check
