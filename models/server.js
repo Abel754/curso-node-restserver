@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
+const fileUpload = require('express-fileupload');
 
 class Server {
     
@@ -14,6 +15,7 @@ class Server {
             productos: '/api/productos',
             categorias: '/api/categorias',
             usuarios: '/api/usuarios',
+            uploads: '/api/uploads',
         }
 
         // Conectar BD
@@ -41,6 +43,14 @@ class Server {
         // Directorio público
         this.app.use(express.static('public')); // Use és específic de middlewares
 
+        // Fileupload - Carga de archivos (npm i express-fileupload)
+        // Note that this option available for versions 1.0.0 and newer. 
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true // Si mous un fitxer a un directori i no existeix, el crearà
+        }));
+
     }
 
     routes() {
@@ -50,6 +60,7 @@ class Server {
         this.app.use(this.paths.productos, require('../routes/productos'));
         this.app.use(this.paths.categorias, require('../routes/categorias'));
         this.app.use(this.paths.usuarios, require('../routes/user'));     
+        this.app.use(this.paths.uploads, require('../routes/uploads'));     
 
     }
 

@@ -28,6 +28,7 @@ const ProductoSchema = Schema({
     },
     descripcion: { type: String },
     disponible: { type: Boolean, default: true },
+    img: { type: String },
 });
 
 // Quan fem un postman, realment guardarà tots els valors però no mostrarà la password i el __v del Postman

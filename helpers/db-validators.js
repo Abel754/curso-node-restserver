@@ -47,6 +47,19 @@ const existeProductoPorId = async( id ) => {
 
 }
 
+// Valida les colecciones permeses
+const coleccionesPermitidas = ( coleccion = '', colecciones = []) => {
+
+    const incluida = colecciones.includes( coleccion ); // coleccion serà la que li passem per paràmetre des de Postman
+
+    if ( !incluida ) {
+        throw new Error(`La coleccion ${coleccion} no es permitida - Permitidas: ${colecciones}`);
+    }
+
+    return true;
+
+}
+
 
 
 module.exports = {
@@ -54,5 +67,6 @@ module.exports = {
     emailExiste: emailExiste,
     existeUsuarioPorId: existeUsuarioPorId,
     existeCategoriaPorId: existeCategoriaPorId,
-    existeProductoPorId: existeProductoPorId
+    existeProductoPorId: existeProductoPorId,
+    coleccionesPermitidas: coleccionesPermitidas
 }
