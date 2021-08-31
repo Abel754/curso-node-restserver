@@ -34,7 +34,7 @@ const login = async(req, res = response) => {
         }
 
         // Generar el JWT
-        const token = await generarJWT(usuario.id); // Cridem la funció (generar-jwt.js) i generem un jason web token amb la seva id
+        const token = await generarJWT(usuario.id); // Cridem la funció (generar-jwt.js) i generem un json web token amb la seva id
 
         res.json({
             usuario,
@@ -94,9 +94,24 @@ const googleSignin = async(req, res = response) => {
 
 }
 
+const renovarToken = async(req, res = response ) => {
+
+    const { usuario } = req; // Usuario vindrà en la petició POSTMAN
+
+    // Generar el JWT
+    const token = await generarJWT(usuario.id); // Cridem la funció (generar-jwt.js) i generem un json web token amb la seva id
+
+    res.json({
+        usuario,
+        token
+    })
+
+}
+
 
 
 module.exports = {
     login: login,
-    googleSignin: googleSignin
+    googleSignin: googleSignin,
+    renovarToken: renovarToken
 }
